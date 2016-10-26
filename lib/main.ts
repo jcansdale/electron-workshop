@@ -3,6 +3,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 let mainWindow: Electron.BrowserWindow = null
+let content: string = null
 
 app.on('open-file', (event, file) => {
   const content = fs.readFileSync(file).toString()
@@ -24,7 +25,7 @@ app.on('ready', () => {
   })
 })
 
-function openFile () {
+export function openFile () {
   const files = dialog.showOpenDialog(mainWindow, {
     properties: ['openFile'],
     filters: [
@@ -42,7 +43,11 @@ function openFile () {
   mainWindow.webContents.send('file-opened', file, content)
 }
 
-function saveFile (content) {
+export function setHtml (html: string) {
+  content = html;
+}
+
+export function saveFile () {
   const fileName = dialog.showSaveDialog(mainWindow, {
     title: 'Save HTML Output',
     defaultPath: app.getPath('documents'),
@@ -56,9 +61,6 @@ function saveFile (content) {
   fs.writeFileSync(fileName, content)
 }
 
-exports.openFile = openFile
-exports.saveFile = saveFile
-
 const template: Electron.MenuItemOptions[] = [
   {
     label: 'File',
@@ -71,7 +73,7 @@ const template: Electron.MenuItemOptions[] = [
       {
         label: 'Save',
         accelerator: 'CmdOrCtrl+S',
-        click () { saveFile("TODO: Save content!") }
+        click () { saveFile() }
       }
     ]
   },

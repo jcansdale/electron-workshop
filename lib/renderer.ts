@@ -14,18 +14,18 @@ const $openInDefaultEditorButton = $('#open-in-default-editor')
 let currentFile: string = null
 
 ipc.on('file-opened', (event, file, content) => {
-  currentFile = file
+  currentFile = file;
+  (<any>$showInFileSystemButton).attr('disabled', false);
+  (<any>$openInDefaultEditorButton).attr('disabled', false);
 
-  $showInFileSystemButton.attr('disabled', 'false')
-  $openInDefaultEditorButton.attr('disabled', 'false')
-
-  $markdownView.val(content)
-  renderMarkdownToHtml(content)
+  $markdownView.val(content);
+  renderMarkdownToHtml(content);
 })
 
 function renderMarkdownToHtml (markdown) {
   const html = marked(markdown)
   $htmlView.html(html)
+  mainProcess.setHtml(html)
 }
 
 $markdownView.on('keyup', (event) => {
@@ -43,8 +43,7 @@ $copyHtmlButton.on('click', () => {
 })
 
 $saveFileButton.on('click', () => {
-  const html = $htmlView.html()
-  mainProcess.saveFile(html)
+  mainProcess.saveFile()
 })
 
 $(document).on('click', 'a[href^="http"]', (event) => {
